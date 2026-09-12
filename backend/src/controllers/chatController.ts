@@ -27,7 +27,7 @@ export class ChatController {
     const userId = req.user?.userId || null;
 
     // 1. Run Cybersecurity Advisor & Threat Triage
-    const analysis = ChatAdvisor.analyze(message);
+    const analysis = await ChatAdvisor.analyzeAsync(message);
 
     // 2. Persist User Message to ChatMessage
     await prisma.chatMessage.create({

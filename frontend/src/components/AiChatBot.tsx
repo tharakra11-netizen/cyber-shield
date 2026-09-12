@@ -55,7 +55,7 @@ export const AiChatBot: React.FC = () => {
             {
               id: 'welcome_msg',
               sender: 'bot',
-              message: `### 👋 Greetings! I am CyberBot AI\n\nI am your 24/7 cybersecurity copilot. You can ask me any security questions, or **paste suspicious links, SMS messages, or UPI payment details** directly here for instant vulnerability assessment!`,
+              message: `### 👋 Greetings! I am CyberBot AI\n\nI am your intelligent cybersecurity assistant. Ask me anything about online safety, ethical hacking, 2FA, password security, or paste suspicious links, SMS messages, and UPI details for real-time analysis!`,
               createdAt: new Date().toISOString()
             }
           ]);
@@ -158,10 +158,12 @@ export const AiChatBot: React.FC = () => {
   };
 
   const suggestionChips = [
-    { label: '🚨 I shared an OTP', text: 'I shared my OTP with someone calling from my bank by mistake, what should I do right now?' },
-    { label: '🔍 How to spot fake links?', text: 'How do I spot a phishing URL and check for typosquatting?' },
+    { label: '👋 Hello!', text: 'Hello! How can you help me stay safe online?' },
+    { label: '🔍 Spot fake links', text: 'How do I spot a phishing URL and check for typosquatting?' },
+    { label: '🔐 Passwords & 2FA', text: 'What is the safest way to create and manage strong passwords?' },
+    { label: '🚨 Clicked a bad link', text: 'I clicked on a suspicious link by mistake, what should I do right now?' },
     { label: '💳 UPI PIN fraud trap', text: 'Someone asked me to enter my UPI PIN to receive cashback. Is that safe?' },
-    { label: '🛡️ Test link safety', text: 'Is https://paypa1-security.xyz/login safe?' }
+    { label: '🦠 Ransomware defense', text: 'How does ransomware work and how do I protect my system?' }
   ];
 
   // Helper to render markdown-like text smoothly
@@ -321,30 +323,38 @@ export const AiChatBot: React.FC = () => {
                         }`}
                       >
                         {/* Threat Vector / Severity Tag for Bot */}
-                        {!isUser && msg.riskLevel && (
-                          <div className="flex items-center gap-1.5 mb-2 pb-1.5 border-b border-slate-700/60">
-                            <span className="text-[9px] font-mono font-bold uppercase px-1.5 py-0.2 rounded bg-slate-950 text-slate-300 border border-slate-800">
-                              {msg.detectedType || 'THREAT EVAL'}
-                            </span>
-                            <span
-                              className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border ${
-                                msg.riskLevel === 'CRITICAL'
-                                  ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
-                                  : msg.riskLevel === 'HIGH'
-                                  ? 'bg-orange-500/20 text-orange-300 border-orange-500/30'
-                                  : msg.riskLevel === 'MODERATE'
-                                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-                                  : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                              }`}
-                            >
-                              {msg.riskLevel}
-                            </span>
-                            {msg.riskScore !== undefined && msg.riskScore !== null && (
-                              <span className="text-[10px] font-mono text-slate-400 ml-auto">
-                                Risk Index: <strong className="text-white">{msg.riskScore}</strong>/100
+                        {!isUser && (
+                          (msg.scanId || (msg.detectedType && msg.detectedType !== 'GENERAL' && (msg.riskScore || 0) > 0)) ? (
+                            <div className="flex items-center gap-1.5 mb-2 pb-1.5 border-b border-slate-700/60">
+                              <span className="text-[9px] font-mono font-bold uppercase px-1.5 py-0.2 rounded bg-slate-950 text-slate-300 border border-slate-800">
+                                {msg.detectedType || 'THREAT EVAL'}
                               </span>
-                            )}
-                          </div>
+                              <span
+                                className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border ${
+                                  msg.riskLevel === 'CRITICAL'
+                                    ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+                                    : msg.riskLevel === 'HIGH'
+                                    ? 'bg-orange-500/20 text-orange-300 border-orange-500/30'
+                                    : msg.riskLevel === 'MODERATE'
+                                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                                    : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                                }`}
+                              >
+                                {msg.riskLevel}
+                              </span>
+                              {msg.riskScore !== undefined && msg.riskScore !== null && msg.riskScore > 0 && (
+                                <span className="text-[10px] font-mono text-slate-400 ml-auto">
+                                  Risk Index: <strong className="text-white">{msg.riskScore}</strong>/100
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1.5 mb-1.5 pb-1 border-b border-slate-850">
+                              <span className="text-[9px] font-mono font-semibold uppercase px-1.5 py-0.5 rounded bg-blue-500/10 text-cyan-300 border border-blue-500/20 flex items-center gap-1">
+                                <Sparkles className="w-2.5 h-2.5 text-cyan-400" /> AI Agent
+                              </span>
+                            </div>
+                          )
                         )}
 
                         {/* Content */}
