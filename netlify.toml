@@ -1,0 +1,10 @@
+[build]
+  base = "frontend"
+  publish = "dist"
+  command = "npm run build"
+
+# SPA routing fallback: allows refreshing /dashboard, /admin, etc. without 404
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

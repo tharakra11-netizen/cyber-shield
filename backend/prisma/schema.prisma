@@ -1,0 +1,95 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String     @id @default(uuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         String     @default("USER") // USER, ADMIN
+  isActive     Boolean    @default(true)
+  isVerified   Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  scans        Scan[]
+  auditLogs    AuditLog[]
+  chatMessages ChatMessage[]
+  loginSessions LoginSession[]
+}
+
+model Scan {
+  id              String   @id @default(uuid())
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type            String   // URL, QR, OTP, UPI, CHAT
+  inputHash       String
+  maskedInput     String
+  resultStatus    String   // SAFE, SUSPICIOUS, MALICIOUS, UNKNOWN
+  riskScore       Int      // 0 - 100
+  confidenceScore Int      // 0 - 100
+  riskLevel       String   // LOW, MODERATE, HIGH, CRITICAL
+  reasons         String   // JSON string of array of string or signal objects
+  recommendation  String
+  metadata        String?  // JSON string
+  createdAt       DateTime @default(now())
+
+  @@index([userId])
+  @@index([type])
+  @@index([riskLevel])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  adminUserId String?
+  adminUser   User?    @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+  action      String
+  targetType  String
+  targetId    String?
+  metadata    String?  // JSON string
+  createdAt   DateTime @default(now())
+
+  @@index([adminUserId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model ChatMessage {
+  id           String   @id @default(uuid())
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId    String
+  sender       String   // user, bot
+  message      String
+  detectedType String?  // GENERAL, URL, OTP, UPI, QR
+  riskScore    Int?     // 0 - 100
+  riskLevel    String?  // LOW, MODERATE, HIGH, CRITICAL
+  scanId       String?  // linked Scan record if created
+  metadata     String?  // JSON string
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([createdAt])
+}
+
+model LoginSession {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userName   String
+  userEmail  String
+  device     String
+  ipAddress  String
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
