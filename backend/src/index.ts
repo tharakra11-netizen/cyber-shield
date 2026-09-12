@@ -41,7 +41,23 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Rate Limiter on API
 app.use('/api', apiLimiter);
 
-// Health Check
+// Health Check & Root
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ONLINE',
+    service: 'Cyber Shield API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      detect: '/api/detect',
+      scans: '/api/scans',
+      admin: '/api/admin',
+      chat: '/api/chat'
+    }
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'HEALTHY',
