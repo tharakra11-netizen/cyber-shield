@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 5000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
 
 // Security Headers & CORS
-app.use(helmet({
+app.use((helmet as any)({
   crossOriginResourcePolicy: { policy: 'cross-origin' }
 }));
 
