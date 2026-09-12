@@ -10,7 +10,9 @@ import {
   UserActivityData
 } from '../types/index.js';
 
-const API_BASE = (import.meta as any).env?.VITE_API_URL || '/api';
+const rawBase = (import.meta as any).env?.VITE_API_URL || '/api';
+const cleanBase = rawBase.replace(/\/+$/, '');
+const API_BASE = cleanBase.endsWith('/api') ? cleanBase : `${cleanBase}/api`;
 
 function getAuthHeaders(): HeadersInit {
   const token = localStorage.getItem('token');
