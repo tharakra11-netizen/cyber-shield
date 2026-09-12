@@ -62,9 +62,11 @@ app.use('/api/chat', chatRoutes);
 app.use(errorHandler);
 
 // Start Server
-app.listen(PORT, () => {
-  logger.info(`Cyber Shield Backend running on http://localhost:${PORT}`);
-  logger.info(`API Healthcheck: http://localhost:${PORT}/api/health`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    logger.info(`Cyber Shield Backend running on http://localhost:${PORT}`);
+    logger.info(`API Healthcheck: http://localhost:${PORT}/api/health`);
+  });
+}
 
 export default app;
