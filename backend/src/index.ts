@@ -22,8 +22,8 @@ app.use((helmet as any)({
   crossOriginResourcePolicy: { policy: 'cross-origin' }
 }));
 
-app.use(cors({
-  origin: (origin, callback) => {
+app.use((cors as any)({
+  origin: (origin: any, callback: any) => {
     // Allow requests with no origin (like mobile apps, curl, server-to-server) or matching localhost
     if (!origin || origin.startsWith('http://localhost') || origin === CORS_ORIGIN) {
       callback(null, true);
